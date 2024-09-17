@@ -1,6 +1,7 @@
 import warnings
 warnings.filterwarnings("ignore")
 
+import os
 import pathlib
 import datetime
 import streamlit as st
@@ -16,7 +17,6 @@ import logging
 import sys
 
 
-
 logging.basicConfig(
     level=logging.INFO,  # Set the minimum log level
     format='%(asctime)s - %(levelname)s - %(message)s',  # Define the log message format
@@ -28,6 +28,10 @@ logging.basicConfig(
 
 logger = logging.getLogger(__file__)
 
+
+# Get the value of a specific config setting
+development_mode = bool(os.environ.get('DEV_MODE', False))
+
 DIV_COLOR = 'orange'
 CACHE_TTL = 60 * 2  # two minte
 CACHE_MAX_ENTRIES = 2  # cache max of 2 item to save memory
@@ -35,30 +39,36 @@ CACHE_MAX_ENTRIES = 2  # cache max of 2 item to save memory
 
 # Function to fetch data from FTP (dummy implementation)
 @st.cache_data(ttl=CACHE_TTL, max_entries=CACHE_MAX_ENTRIES)  # Cache for 10 minutes
-def fetch_data_from_source(cnc_machine='CNC_1', start=None, end=None):
+def fetch_data_from_source(
+    cnc_machine='CNC_1',
+    start: datetime.datetime=None,
+    end: datetime.datetime=None
+):
     # TODO: add CNC parameter for selecting cnc
 
-    base_path = f'datasource/{cnc_machine}/2024'
+    base_path = f'datasource/{cnc_machine}/{start.year}'
+
     if start or end:
         files = list(pathlib.Path(base_path).glob('*.pro'))
+
         df = pd.DataFrame(
             {
                 'files': files,
                 'date': pd.to_datetime([i.name.split('.')[0] for i in files])
             }
         )
+
+        # filter the dates before reading the files
         if start:
             df = df[df['date'] >= pd.to_datetime(start)]
         if end:
             df = df[df['date'] <= pd.to_datetime(end)]
-
-        data = []
-        for i in df['files']:
-            sample = etl.load_csv(i)
-        
-            data.append(sample)
-
         logger.info(f"reading a total of: {len(df)} files")
+
+        # load the files
+        data = [etl.load_csv(i) for i in df['files']]
+
+        # process the data
         full_df = etl.clean_data(pd.concat(data))
         full_df['CNC'] = cnc_machine
 
@@ -68,7 +78,9 @@ def fetch_data_from_source(cnc_machine='CNC_1', start=None, end=None):
 
 
 # New function to create line chart and histogram
-def create_line_and_histogram(df, x, y, color, title, x_label, y_label, bar=False, hist_color=None):
+def create_line_and_histogram(
+        df: pd.DataFrame, x, y, color, title, x_label, y_label, bar=False, hist_color=None
+):
     fig = make_subplots(rows=2, cols=1, shared_xaxes=False, 
                         vertical_spacing=0.25, 
                         subplot_titles=(f"{title} - Time Series", f"{title} - Distribution"))
@@ -112,10 +124,12 @@ def check_hashes(password, hashed_text):
     return False
 
 
-users = {
-    "admin": make_hashes("admin"),
-    "user": make_hashes("user")
-}
+users = {"houtlander": make_hashes("2020@houtlander")}
+
+
+# add user account for dev mode for debugging
+if development_mode:
+    users["user"] = make_hashes("user")
 
 
 # Login and logout functions (unchanged)
@@ -144,6 +158,8 @@ def modal(msg: str):
 
 # Main app function
 def main():
+    logger.info(f"Running in app development mode: {development_mode}")
+
     st.set_page_config(page_title="Daily Report", layout="wide")
     st.sidebar.image(
         'https://houtlander.co.za/cdn/shop/files/Final_Houtlander_Logo-01_32ae13f4-56e0-4631-84d4-25e8d9a65dc3_165x.jpg',
