@@ -1,2 +1,3 @@
 # export DEV_MODE=1
-streamlit run app.py --runner.fastReruns True --runner.postScriptGC True --global.developmentMode False
+# export DATA_PATH
+streamlit run app.py --server.port 8000 --server.address 0.0.0.0 --runner.fastReruns True --runner.postScriptGC True --global.developmentMode False

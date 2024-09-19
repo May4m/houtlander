@@ -47,6 +47,8 @@ def fetch_data_from_source(
     # TODO: add CNC parameter for selecting cnc
 
     base_path = f'datasource/{cnc_machine}/{start.year}'
+    if (root_dir := os.environ.get('DATA_PATH')):
+        base_path = f"{root_dir}/{base_path}"
 
     if start or end:
         files = list(pathlib.Path(base_path).glob('*.pro'))
