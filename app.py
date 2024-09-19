@@ -131,7 +131,7 @@ users = {"houtlander": make_hashes("2020@houtlander")}
 
 # add user account for dev mode for debugging
 if development_mode:
-    users["user"] = make_hashes("user")
+    users["admin"] = make_hashes("admin")
 
 
 # Login and logout functions (unchanged)
