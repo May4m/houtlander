@@ -50,6 +50,7 @@ def fetch_data_from_source(
     if (root_dir := os.environ.get('DATA_PATH')):
         base_path = f"{root_dir}/{base_path}"
 
+    logger.info(f"Reading data from {base_path}")
     if start or end:
         files = list(pathlib.Path(base_path).glob('*.pro'))
 
