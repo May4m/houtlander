@@ -47,7 +47,7 @@ def load_csv_file(file: str):
     t0 = time.time()
     df = etl.load_csv(filename=file)
     duration = time.time() - t0
-    logger.info("took {:.2f} seconds to open {}".format(duration, file))
+    logger.debug("took {:.2f} seconds to open {}".format(duration, file))
     return df
 
 # Function to fetch data from FTP (dummy implementation)
