@@ -174,6 +174,3 @@ def clean_data(df: pd.DataFrame):
     df = df.assign(date=pd.to_datetime(df['date'])).sort_values(by='dt_start')
 
     return df
-
-
-df = read_vpro_data('datasource/CNC_1/2024/20240118.pro')
