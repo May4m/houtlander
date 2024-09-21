@@ -2,6 +2,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 import os
+import time
 import pathlib
 import datetime
 import streamlit as st
@@ -33,9 +34,21 @@ logger = logging.getLogger(__file__)
 development_mode = bool(os.environ.get('DEV_MODE', False))
 
 DIV_COLOR = 'orange'
-CACHE_TTL = 60 * 2  # two minte
+CACHE_TTL = 60 * 3  # two minte
 CACHE_MAX_ENTRIES = 2  # cache max of 2 item to save memory
 
+
+@st.cache_data(ttl=CACHE_TTL + 60 * 2)
+def load_csv_file(file: str):
+    """
+    caches opened csv files, so when different files are selected they are not
+    reloaded again
+    """
+    t0 = time.time()
+    df = etl.load_csv(filename=file)
+    duration = time.time() - t0
+    logger.info("took {:.2f} seconds to open {}".format(duration, file))
+    return df
 
 # Function to fetch data from FTP (dummy implementation)
 @st.cache_data(ttl=CACHE_TTL, max_entries=CACHE_MAX_ENTRIES)  # Cache for 10 minutes
@@ -67,7 +80,7 @@ def fetch_data_from_source(
         logger.info(f"reading a total of: {len(df)} files")
 
         # load the files
-        data = [etl.load_csv(i) for i in df['files']]
+        data = [load_csv_file(i) for i in df['files']]
 
         # process the data
         full_df = etl.clean_data(pd.concat(data))
