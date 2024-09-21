@@ -14,6 +14,7 @@ def calculate_machine_availability(df: pd.DataFrame):
 
 
 def calculate_time_between_programs(df: pd.DataFrame):
+    df = df.sort_values(by=['dt_start'])
     df = df.assign(
         group=(df['dimension'] != df['dimension'].shift()).cumsum()
     )
