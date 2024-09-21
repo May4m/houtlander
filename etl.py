@@ -41,14 +41,19 @@ def calculate_warmup_time(df: pd.DataFrame, shift_start: datetime.time=None):
 
 
 def first_part_start_and_end_time(df: pd.DataFrame):
-    return df.groupby(['CNC', 'date']).agg({'dt_start': 'min', 'dt_stop': 'max'}).reset_index()
+    return df.groupby(['CNC', 'date']).agg(
+        {'dt_start': 'min', 'dt_stop': 'max', 'dimension': len}
+    ).reset_index()
 
 
 def summary_statistics(df: pd.DataFrame):
     dfx = first_part_start_and_end_time(df).rename(
-        columns={'dt_start': 'Start Time', 'dt_stop': 'Stop Time'}
+        columns={
+            'dt_start': 'Start Time',
+            'dt_stop': 'Stop Time',
+            'dimension': 'Total Quantity Produced'
+        }
     )
-    dfx['Total Quantity Produced'] = df['quantity'].sum()
     dfx['Data Sample Size'] = len(df)
 
     summary = dict(
@@ -169,3 +174,6 @@ def clean_data(df: pd.DataFrame):
     df = df.assign(date=pd.to_datetime(df['date'])).sort_values(by='dt_start')
 
     return df
+
+
+df = read_vpro_data('datasource/CNC_1/2024/20240118.pro')
