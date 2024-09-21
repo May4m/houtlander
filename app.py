@@ -311,17 +311,18 @@ def main():
         st.header("Basic Summary Info", divider=DIV_COLOR)
         summary = etl.summary_statistics(filtered_data)
         st.subheader("Summary")
-        st.dataframe(summary['summary'])
+        st.dataframe(summary['summary'], use_container_width=True)
         
         st.subheader("Most Produced Products")
-        st.dataframe(summary['most_produced_program'])
+        st.dataframe(summary['most_produced_program'], use_container_width=True)
 
         st.subheader("Time Between Programs")
 
         st.dataframe(
             time_between_data.assign(
                 date=time_between_data['dt_stop'].dt.date
-            ).groupby(['date'])['time_between'].describe().T
+            ).groupby(['date'])['time_between'].describe().T,
+            use_container_width=True
         )
     else:
         st.title("Houtlander Operation Report")
