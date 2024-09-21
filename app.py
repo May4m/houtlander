@@ -204,11 +204,11 @@ def main():
         # Sidebar for date range and CNC selection
         st.sidebar.header("Filters")
         start_date = st.sidebar.date_input(
-            "Start Date", pd.Timestamp('18-01-2024'),
+            "Start Date", pd.Timestamp.now(),
             help="select the start date for the report. This is used to filter older data"
         )
         end_date = st.sidebar.date_input(
-            "End Date", pd.Timestamp('18-01-2024'),
+            "End Date", pd.Timestamp.now(),
             help="select the start date for the report"
         )
         if start_date > end_date:
@@ -217,7 +217,7 @@ def main():
         try:
             data = fetch_data_from_source(selected_cnc, start_date, end_date)
         except ValueError:
-            return modal("No Data Available for the selected dates")
+            return modal("No Data Available for the selected dates, please SELECT dates with data")
         
         
         if len(data) == 0:
