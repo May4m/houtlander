@@ -95,9 +95,11 @@ def fetch_data_from_source(
 def create_line_and_histogram(
         df: pd.DataFrame, x, y, color, title, x_label, y_label, bar=False, hist_color=None
 ):
-    fig = make_subplots(rows=2, cols=1, shared_xaxes=False, 
-                        vertical_spacing=0.25, 
-                        subplot_titles=(f"{title} - Time Series", f"{title} - Distribution"))
+    fig = make_subplots(
+        rows=2, cols=1, shared_xaxes=False, 
+        vertical_spacing=0.28, 
+        subplot_titles=(f"{title} - Time Series", f"{title} - Distribution")
+    )
     
     # Line chart
     for cnc in df[color].unique():

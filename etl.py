@@ -171,6 +171,8 @@ def clean_data(df: pd.DataFrame):
     for col in ['start', 'stop']:
         df = convert_to_timestamp(df, col_prefix=col)
 
+    df = df[df['dt_stop'] > df['dt_start']]
+
     df = df.assign(date=pd.to_datetime(df['date'])).sort_values(by='dt_start')
 
     return df
