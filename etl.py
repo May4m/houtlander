@@ -53,7 +53,7 @@ def summary_statistics(df: pd.DataFrame):
 
     summary = dict(
         summary = dfx,
-        most_produced_program = df[['CNC', 'dimension']].value_counts().head(),
+        most_produced_program = df[['CNC', 'dimension', 'prgm']].value_counts().head(),
     )
     return summary
 

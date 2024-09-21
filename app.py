@@ -304,7 +304,6 @@ def main():
                 date=time_between_data['dt_stop'].dt.date
             ).groupby(['date'])['time_between'].describe().T
         )
-        
     else:
         st.title("Houtlander Operation Report")
         st.write("Please log in to view the report.")
