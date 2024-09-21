@@ -229,7 +229,8 @@ def main():
 
         try:
             data = fetch_data_from_source(selected_cnc, start_date, end_date)
-        except ValueError:
+        except ValueError as err:
+            logger.exception(err)
             return modal(
                 "No Data Available for the selected dates, please SELECT dates with data "
                 "On the panel located at the right of the page"
