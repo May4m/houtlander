@@ -38,7 +38,7 @@ CACHE_TTL = 60 * 3  # two minte
 CACHE_MAX_ENTRIES = 2  # cache max of 2 item to save memory
 
 
-@st.cache_data(ttl=CACHE_TTL + 60 * 2)
+@st.cache_data(ttl=CACHE_TTL + 60 * 30)  # 33 min
 def load_csv_file(file: str):
     """
     caches opened csv files, so when different files are selected they are not
